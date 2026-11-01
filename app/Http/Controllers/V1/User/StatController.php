@@ -13,7 +13,9 @@ class StatController extends Controller
 {
     public function getTrafficLog(Request $request)
     {
-        $startDate = now()->startOfMonth()->timestamp;
+        // Rolling ~30 calendar days (web「近月」). startOfMonth() returns only
+        // today on the 1st, which is too short for the client and user center.
+        $startDate = now()->subDays(30)->startOfDay()->timestamp;
         $records = StatUser::query()
             ->where('user_id', $request->user()->id)
             ->where('record_at', '>=', $startDate)
